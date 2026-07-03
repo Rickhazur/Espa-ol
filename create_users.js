@@ -6,9 +6,9 @@ const SUPABASE_ANON_KEY = "sb_publishable_274gdLcayOJVo4hV3ZiJHQ_6QbRoh5p";
 const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 const users = [
-  { email: 'karin@estudiante.com', password: '2026', options: { data: { nombre: 'Karin' } } },
-  { email: 'eli@estudiante.com', password: '2026', options: { data: { nombre: 'Eli' } } },
-  { email: 'teacher@bogota.co', password: '2026', options: { data: { nombre: 'Profesor' } } }
+  { email: 'karin@estudiante.com', password: 'Karin2026', options: { data: { nombre: 'Karin' } } },
+  { email: 'eli@estudiante.com', password: 'Eli2026', options: { data: { nombre: 'Eli' } } },
+  { email: 'teacher@bogota.co', password: 'Profe2026', options: { data: { nombre: 'Profesor' } } }
 ];
 
 async function createUsers() {

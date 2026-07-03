@@ -1463,8 +1463,8 @@ function inicializarSesion() {
       loginError.textContent = error.message;
     } else {
       modal.classList.remove('open');
-      // Forzar cambio si la clave es la genérica
-      if (password === '2026') {
+      // Forzar cambio si la clave es la inicial
+      if (password === 'Karin2026' || password === 'Eli2026' || password === 'Profe2026') {
         sessionStorage.setItem('require_password_change', 'true');
         qs('#password-modal').classList.add('open');
       } else {
@@ -1535,9 +1535,9 @@ document.addEventListener('DOMContentLoaded', () => {
       // Función temporal para crear usuarios
       window.crearUsuariosSupabase = async () => {
         const users = [
-          { email: 'karin@estudiante.com', password: '2026', nombre: 'Karin' },
-          { email: 'eli@estudiante.com', password: '2026', nombre: 'Eli' },
-          { email: 'teacher@bogota.co', password: '2026', nombre: 'Profesor' }
+          { email: 'karin@estudiante.com', password: 'Karin2026', nombre: 'Karin' },
+          { email: 'eli@estudiante.com', password: 'Eli2026', nombre: 'Eli' },
+          { email: 'teacher@bogota.co', password: 'Profe2026', nombre: 'Profesor' }
         ];
         let msg = "Resultados del registro:\n";
         for (const u of users) {
