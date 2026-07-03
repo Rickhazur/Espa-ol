@@ -1587,5 +1587,14 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializarQuiz();
   inicializarSesion();
 
+  // PWA: Service Worker Registration
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('sw.js').then((registration) => {
+      console.log('ServiceWorker registro exitoso: ', registration.scope);
+    }).catch((err) => {
+      console.log('ServiceWorker registro falló: ', err);
+    });
+  }
+
   console.log('🇨🇴 Bogotá Aventura cargado. ¡Bienvenidas Karin y Eli!');
 });

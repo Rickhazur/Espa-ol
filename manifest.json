@@ -1,0 +1,30 @@
+{
+  "name": "Bogotá Aventura — Karin y Eli",
+  "short_name": "Bogotá Aventura",
+  "description": "Bitácora de viaje interactiva y guía de modismos bogotanos para Karin y Eli.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#07050f",
+  "theme_color": "#f5c842",
+  "lang": "es",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "images/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "images/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "categories": [
+    "education",
+    "travel"
+  ]
+}
