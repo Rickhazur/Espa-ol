@@ -1366,8 +1366,8 @@ function inicializarSesion() {
         const isAdmin = session.user.email === ADMIN_EMAIL;
         
         sesion = {
-          tipo: isAdmin ? 'admin' : 'student',
-          nombre: isAdmin ? null : nombreUser,
+          tipo: isAdmin ? 'admin' : 'estudiante',
+          nombre: isAdmin ? 'Profesor' : (userMetadata.nombre || nombreUser),
           user: session.user
         };
         
