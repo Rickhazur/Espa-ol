@@ -1560,10 +1560,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
         alert(msg);
       };
-      // Ejecutarlo automáticamente una vez
-      setTimeout(() => {
-        window.crearUsuariosSupabase();
-      }, 1000);
+      // Ejecutarlo automáticamente una vez (Desactivado para evitar el popup)
+      // setTimeout(() => {
+      //   window.crearUsuariosSupabase();
+      // }, 1000);
       
     } else {
       console.warn('⚠️ Supabase SDK no disponible. Modo local activado.');
