@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bogotá Aventura — Karin &amp; Eli</title>
+  <meta name="description" content="Bitácora de viaje interactiva y guía de modismos bogotanos para Karin y Eli, estudiantes suizas de español avanzado.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- CANVAS CONFETI -->
+  <canvas id="confetti-canvas"></canvas>
+
+  <!-- RAIN -->
+  <div id="rain-container"></div>
+
+  <!-- ════════════════ HERO ════════════════ -->
+  <header id="hero">
+    <div id="hero-bg"></div>
+    <div id="hero-overlay"></div>
+    <div id="theme-pill">
+      <button id="theme-toggle" aria-label="Cambiar tema">
+        <span id="theme-icon">☀️</span>
+        <span id="theme-label">Soleado</span>
+      </button>
+    </div>
+    <div id="hero-content">
+      <div id="hero-flags">
+        <span class="flag-badge">🇨🇭 Karin &amp; Eli</span>
+        <span class="flag-badge accent">🇨🇴 Bogotá 2026</span>
+      </div>
+      <h1>¡Bienvenidas<br>a la Atenas<br>Sudamericana!</h1>
+      <p>Su bitácora interactiva de 5 días y guía de rolismos para conquistar las alturas de la capital.</p>
+      <button class="hero-cta" onclick="navegarA('bitacora')">Explorar la Bitácora →</button>
+    </div>
+    <div id="hero-scroll-hint">↓</div>
+  </header>
+
+  <!-- ════════════════ NAV ════════════════ -->
+  <nav id="main-nav">
+    <div id="nav-inner">
+      <div id="nav-brand">🇨🇴 BA</div>
+      <ul id="nav-links">
+        <li><button class="nav-btn active" data-section="bitacora">📅 Bitácora</button></li>
+        <li><button class="nav-btn" data-section="glosario">🗣️ Rolismos</button></li>
+        <li><button class="nav-btn" data-section="quiz">🧠 Quiz</button></li>
+        <li><button class="nav-btn" data-section="consejos">🎒 Consejos</button></li>
+        <li><a href="https://www.tiktok.com/@ricardotorresespanol" target="_blank" class="nav-btn" style="text-decoration:none; display:inline-block;">📱 TikTok</a></li>
+        <li id="nav-admin-li" style="display:none"><button class="nav-btn" data-section="admin">🔑 Admin</button></li>
+      </ul>
+      <button id="session-btn" class="btn-session">👤 Ingresar</button>
+    </div>
+  </nav>
+
+  <!-- ════════════════ MAIN ════════════════ -->
+  <main id="main-content">
+
+    <!-- ── BITÁCORA ── -->
+    <section id="bitacora" class="page active">
+      <div class="page-header">
+        <div class="page-header-label">5 Días en Bogotá</div>
+        <h2>Bitácora de Viaje</h2>
+        <p>Un recorrido literario y cultural para descubrir los tesoros de la sabana y el centro histórico.</p>
+      </div>
+      <div id="bitacora-layout">
+        <aside id="bitacora-sidebar">
+          <div id="dias-selector"></div>
+          <div id="passport-widget"></div>
+        </aside>
+        <article id="bitacora-panel"></article>
+      </div>
+    </section>
+
+    <!-- ── GLOSARIO ── -->
+    <section id="glosario" class="page">
+      <div class="page-header">
+        <div class="page-header-label">Diccionario Bogotano</div>
+        <h2>Habla como Rola 💬</h2>
+        <p>Expresiones bogotanas con contexto sociolingüístico y traducción al alemán para Karin y Eli.</p>
+      </div>
+      <div id="glosario-filters">
+        <div id="search-wrapper">
+          <input type="text" id="modismos-search" placeholder="Buscar: pola, tinto, Kater...">
+        </div>
+        <div id="filter-pills">
+          <button class="pill active" data-filter="todos">Todos</button>
+          <button class="pill" data-filter="saludos">Saludos</button>
+          <button class="pill" data-filter="comida">Comida &amp; Bebida</button>
+          <button class="pill" data-filter="fiesta">Fiesta</button>
+          <button class="pill" data-filter="diario">Vida Diaria</button>
+          <button class="pill" data-filter="expresiones">Expresiones</button>
+        </div>
+      </div>
+      <div id="glosario-grid"></div>
+    </section>
+
+    <!-- ── QUIZ ── -->
+    <section id="quiz" class="page">
+      <div class="page-header">
+        <div class="page-header-label">Ponte a Prueba</div>
+        <h2>El Quiz Rolo 🧠</h2>
+        <p>¿Qué tanto saben de la cultura y el habla bogotana? Resuelvan este desafío y descubran su rango.</p>
+      </div>
+      <div id="quiz-wrapper">
+        <div id="quiz-progress-bar-track">
+          <div id="quiz-progress-bar-fill"></div>
+        </div>
+        <div id="quiz-progress-label">Pregunta 1 de 5</div>
+        <div id="quiz-card-area"></div>
+        <div id="quiz-results">
+          <div class="results-emoji">🏆</div>
+          <h3>¡Quiz Completado!</h3>
+          <div id="quiz-score-display">Puntaje: <span id="quiz-score-value">0 / 5</span></div>
+          <div id="quiz-badge"></div>
+          <p id="quiz-feedback-text"></p>
+          <button id="quiz-restart" class="btn-primary">Intentar de nuevo 🔄</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CONSEJOS ── -->
+    <section id="consejos" class="page">
+      <div class="page-header">
+        <div class="page-header-label">Guía de Supervivencia</div>
+        <h2>Consejos Esenciales 🎒</h2>
+        <p>Bogotá está a 2.600m sobre el nivel del mar. Lo que necesitan saber para disfrutarla al máximo.</p>
+      </div>
+      <div id="consejos-grid">
+        <div class="consejo-card">
+          <div class="consejo-icon">🌡️</div>
+          <h3>El Clima Camaleónico</h3>
+          <p>En Bogotá pueden experimentar las cuatro estaciones en un día. Mañanas frías, mediodías cálidos, tardes lluviosas y noches heladas. <strong>Regla de oro:</strong> vístanse en capas (estilo «cebolla») y lleven siempre paraguas.</p>
+        </div>
+        <div class="consejo-card">
+          <div class="consejo-icon">⛰️</div>
+          <h3>La Altura Andina</h3>
+          <p>Con 2.600 metros de altitud el oxígeno escasea. El primer día caminen despacio, eviten esfuerzos intensos y tomen mucha agua. Si sienten dolor de cabeza, pidan un <em>té de coca</em>. Moderen el alcohol la primera noche.</p>
+        </div>
+        <div class="consejo-card">
+          <div class="consejo-icon">🔒</div>
+          <h3>«No Dar Papaya»</h3>
+          <p>La regla de oro de la seguridad bogotana. No exhiban objetos de valor (móviles, cámaras) de forma descuidada. Usen mochilas cruzadas al frente y pidan taxis solo por app (Uber, Cabify, Didi) de noche.</p>
+        </div>
+        <div class="consejo-card">
+          <div class="consejo-icon">🚌</div>
+          <h3>Transporte Inteligente</h3>
+          <p>El <em>TransMilenio</em> (buses rojos articulados) tiene carriles exclusivos y es la forma más rápida de cruzar la ciudad de norte a sur. Tengan lista su tarjeta <em>Tullave</em>. Fuera de hora pico, las apps de transporte privado son económicas.</p>
+        </div>
+        <div class="consejo-card">
+          <div class="consejo-icon">☕</div>
+          <h3>El Tinto es Sagrado</h3>
+          <p>En Colombia «tinto» es café negro pequeño, nunca vino. Pedir un tinto en cualquier tienda es un ritual de hospitalidad. El <em>café de especialidad</em> colombiano es de los mejores del mundo — no se vayan sin probar un Chemex en Usaquén.</p>
+        </div>
+        <div class="consejo-card">
+          <div class="consejo-icon">💳</div>
+          <h3>Pagos y Dinero</h3>
+          <p>El peso colombiano ($COP) vale mucho menos que el franco suizo. Los mercados locales y tiendas de barrio prefieren efectivo. Los centros comerciales y restaurantes del norte aceptan tarjeta. 1 CHF ≈ 4.500–5.000 COP.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── ADMIN ── -->
+    <section id="admin" class="page">
+      <div class="page-header">
+        <div class="page-header-label">Acceso Profesor</div>
+        <h2>Panel de Control 🔑</h2>
+        <p>Revisa y corrige las bitácoras diarias escritas por Karin y Eli.</p>
+      </div>
+      <div id="admin-layout">
+        <aside id="admin-sidebar">
+          <div id="student-tabs">
+            <button class="student-tab active" data-student="Karin">👩‍🎓 Karin</button>
+            <button class="student-tab" data-student="Eli">👩‍🎓 Eli</button>
+          </div>
+          <div id="admin-days-list"></div>
+        </aside>
+        <div id="admin-review-panel">
+          <div id="review-header">
+            <h3 id="review-title">Revisando: Karin — Día 1</h3>
+            <span id="review-status" class="status-badge pending">Pendiente</span>
+          </div>
+          <div class="review-block">
+            <h4>Bitácora de la Alumna</h4>
+            <blockquote id="student-entry"><em>La alumna aún no ha escrito su bitácora para este día.</em></blockquote>
+          </div>
+          <div class="review-block">
+            <h4>Corrección y Comentarios del Profesor</h4>
+            <textarea id="admin-correction-textarea" placeholder="Escribe aquí las correcciones gramaticales o palabras de aliento en español..." disabled></textarea>
+            <button id="save-correction-btn" class="btn-primary" disabled>Guardar Corrección 💾</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ════════════════ FOOTER ════════════════ -->
+  <footer>
+    <div id="footer-inner">
+      <div id="footer-flags">🇨🇴 ❤️ 🇨🇭</div>
+      <p>Bogotá Aventura © 2026 — Creado con cariño en Bogotá para Karin y Eli</p>
+      <p>¡Aprende más español con Ricardo en <a href="https://www.tiktok.com/@ricardotorresespanol" target="_blank" style="color:var(--gold); font-weight:bold; text-decoration:none;">TikTok</a>!</p>
+      <p>¡Disfruten su estadía en la Atenas Sudamericana!</p>
+    </div>
+  </footer>
+
+  <!-- ════════════════ MODAL LOGIN ════════════════ -->
+  <div id="login-modal" class="modal-overlay">
+    <div class="modal-box glass-panel">
+      <button id="modal-close" class="modal-close" aria-label="Cerrar">✕</button>
+      <h3>Acceso al Sistema</h3>
+      <p>Ingresa tus credenciales para acceder a la bitácora interactiva de Bogotá.</p>
+      
+      <div id="login-form-container">
+        <form id="auth-login-form" class="auth-form">
+          <div class="input-group">
+            <label for="login-email">Correo Electrónico</label>
+            <input type="email" id="login-email" placeholder="ej. karin@estudiante.com" required>
+          </div>
+          <div class="input-group">
+            <label for="login-password">Contraseña</label>
+            <input type="password" id="login-password" placeholder="••••••••" required>
+          </div>
+          <button type="submit" id="login-submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Ingresar</button>
+          <p id="login-error" class="error-msg"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- ════════════════ MODAL CAMBIO DE CONTRASEÑA ════════════════ -->
+  <div id="password-modal" class="modal-overlay">
+    <div class="modal-box glass-panel">
+      <h3>🔒 Actualiza tu Contraseña</h3>
+      <p>Por seguridad, debes cambiar la contraseña genérica ('2026') antes de continuar.</p>
+      
+      <div id="password-form-container">
+        <form id="auth-password-form" class="auth-form">
+          <div class="input-group">
+            <label for="new-password">Nueva Contraseña</label>
+            <input type="password" id="new-password" placeholder="Mínimo 6 caracteres" required minlength="6">
+          </div>
+          <button type="submit" id="password-submit" class="btn-primary" style="width: 100%; margin-top: 10px;">Guardar y Continuar</button>
+          <p id="password-error" class="error-msg"></p>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- SCRIPTS -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="app.js"></script>
+</body>
+</html>
