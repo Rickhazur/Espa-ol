@@ -866,7 +866,7 @@ footer p { margin-bottom: 6px; line-height: 1.7; }
 
 .modal-box {
   background: var(--bg-deep); border: 1px solid var(--border-glass);
-  border-radius: var(--r-xl); padding: 40px; width: 100%; max-width: 440px;
+  border-radius: var(--r-xl); padding: 40px; width: calc(100% - 40px); max-width: 440px;
   position: relative; transform: translateY(20px) scale(0.95);
   transition: all 0.4s var(--spring);
   box-shadow: 0 20px 80px rgba(0,0,0,0.6);
