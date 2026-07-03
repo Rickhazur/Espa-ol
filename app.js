@@ -966,29 +966,6 @@ async function renderBitacora() {
         </div>
       `).join('')}
     </div>
-
-    ${d.lecciones ? `
-    <div class="lecciones-diarias">
-      <h3 style="margin: 30px 0 15px; font-family: Syne, sans-serif; font-size: 1.4rem; color: var(--gold);">📚 Lecciones de Español Avanzado</h3>
-      <div style="display: grid; gap: 20px;">
-        ${d.lecciones.map((l, i) => `
-          <div class="actividad-card" style="border-left: 3px solid var(--gold);">
-            <div class="act-name" style="margin-bottom: 8px;">Lección ${i+1}: ${l.titulo}</div>
-            <p class="act-desc">${l.contenido}</p>
-            <div class="mini-quiz-container" style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
-              <strong>📝 Quiz rápido:</strong> ${l.quizPregunta}
-              <div class="mini-quiz-options" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
-                ${l.quizOpciones.map((op, opIdx) => `
-                  <button class="btn-mini-quiz" onclick="verificarMiniQuiz(this, ${opIdx === l.quizCorrecta})" style="text-align: left; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--txt); cursor: pointer;">
-                    ${op}
-                  </button>
-                `).join('')}
-              </div>
-            </div>
-          </div>
-        `).join('')}
-      </div>
-    </div>` : ''}
   `;
 
   setTimeout(() => {
@@ -1508,16 +1485,65 @@ function cerrarSesion() {
   navegarA('bitacora');
 }
 
+function renderPerfil() {
+  const container = qs('#perfil-lecciones-container');
+  if (!container) return;
+
+  let html = '';
+  itinerario.forEach((d, dayIndex) => {
+    if (d.lecciones && d.lecciones.length > 0) {
+      html += `
+      <div class="lecciones-diarias" style="margin-bottom: 40px;">
+        <h3 style="margin: 0 0 15px; font-family: Syne, sans-serif; font-size: 1.4rem; color: var(--gold);">📚 Lecciones del Día ${dayIndex + 1}</h3>
+        <div style="display: grid; gap: 20px;">
+          ${d.lecciones.map((l, i) => `
+            <div class="actividad-card" style="border-left: 3px solid var(--gold);">
+              <div class="act-name" style="margin-bottom: 8px;">Lección ${i+1}: ${l.titulo}</div>
+              <p class="act-desc">${l.contenido}</p>
+              <div class="mini-quiz-container" style="margin-top: 15px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px;">
+                <strong>📝 Quiz rápido:</strong> ${l.quizPregunta}
+                <div class="mini-quiz-options" style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+                  ${l.quizOpciones.map((op, opIdx) => `
+                    <button class="btn-mini-quiz" onclick="verificarMiniQuiz(this, ${opIdx === l.quizCorrecta})" style="text-align: left; padding: 8px 12px; background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 6px; color: var(--txt); cursor: pointer;">
+                      ${op}
+                    </button>
+                  `).join('')}
+                </div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+    }
+  });
+
+  if (!html) {
+    html = '<p>Aún no hay lecciones disponibles.</p>';
+  }
+
+  container.innerHTML = html;
+}
+
 function actualizarUISession() {
   const btn = qs('#session-btn');
   const adminLi = qs('#nav-admin-li');
+  const perfilLi = qs('#nav-perfil-li');
+  
   if (sesion) {
     const label = sesion.tipo === 'admin' ? '🔑 Salir' : `👩‍🎓 ${sesion.nombre} (Salir)`;
     btn.textContent = label;
     adminLi.style.display = sesion.tipo === 'admin' ? '' : 'none';
+    perfilLi.style.display = sesion.tipo === 'estudiante' ? '' : 'none';
+    
+    if (sesion.tipo === 'estudiante') {
+      const titulo = qs('#perfil-titulo');
+      if (titulo) titulo.textContent = `Perfil de ${sesion.nombre}`;
+      renderPerfil();
+    }
   } else {
     btn.textContent = '👤 Ingresar';
     adminLi.style.display = 'none';
+    if (perfilLi) perfilLi.style.display = 'none';
   }
 }
 
