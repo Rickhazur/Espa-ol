@@ -814,7 +814,7 @@ async function renderBitacora() {
   const d = ITINERARIO[diaActivo - 1];
 
   const yaEstampado = tieneSello(diaActivo);
-  const esSello = sesion?.tipo === 'student';
+  const esSello = sesion?.tipo === 'estudiante';
   let entradaAlumna = '', otraEntrada = '', correccion = '';
 
   if (sesion) {
@@ -857,7 +857,7 @@ async function renderBitacora() {
   ];
 
   let diarioSection = '';
-  if (sesion?.tipo === 'student') {
+  if (sesion?.tipo === 'estudiante') {
     const yo = sesion.nombre;
     const otro = yo === 'Karin' ? 'Eli' : 'Karin';
     const tieneCorreccion = correcciones.p1 || correcciones.p2 || correcciones.p3 || correcciones.general;
@@ -1237,6 +1237,199 @@ async function inicializarAdmin() {
       renderAdminReview();
     });
   });
+
+  // Resultados de quizzes: selector de estudiante
+  let adminQrEstudiante = 'Karin';
+  renderAdminQuizResults(adminQrEstudiante);
+
+  qsa('.admin-qr-tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      qsa('.admin-qr-tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      adminQrEstudiante = btn.dataset.student;
+      renderAdminQuizResults(adminQrEstudiante);
+    });
+  });
+}
+
+// ─────────────────────────────────────────────
+// Datos de oraciones para la vista admin
+// ─────────────────────────────────────────────
+const SUBJ_SENTENCES = {
+  1:  { pre: 'Espero que hoy no',         post: '(llover) en Monserrate…',                     tense: 'Presente Subj.' },
+  2:  { pre: 'El profesor nos sugiere que', post: '(probar, nosotros) el ajiaco caliente…',    tense: 'Presente Subj.' },
+  3:  { pre: 'Ricardo quiere que ustedes', post: '(hacer, uds.) una vaca antes de salir.',     tense: 'Presente Subj.' },
+  4:  { pre: 'Si Karin',                   post: '(tener) una ruana, no sentiría el viento.',  tense: 'Imperf. Subj.' },
+  5:  { pre: 'La guía recomendó que',      post: '(caminar, nosotros) despacio por la altura.', tense: 'Imperf. Subj.' },
+  6:  { pre: 'Me gustaría que Eli',        post: '(aprender) a bailar salsa rola.',            tense: 'Imperf. Subj.' },
+  7:  { pre: 'Me alegra que ustedes',      post: '(visitar, uds.) la Catedral de Sal.',        tense: 'Pret. Perf. Subj.' },
+  8:  { pre: 'Es una lástima que el mercado ya', post: '(cerrar) sus puertas por hoy.',        tense: 'Pret. Perf. Subj.' },
+  9:  { pre: 'Esperamos que no les',       post: '(parecer) extraña la changua.',              tense: 'Pret. Perf. Subj.' },
+  10: { pre: 'Si ustedes',                 post: '(saber, uds.) que el clima cambiaba tanto…', tense: 'Pluscuamp. Subj.' },
+  11: { pre: 'Ojalá no',                   post: '(llover) tanto en La Candelaria.',           tense: 'Pluscuamp. Subj.' },
+  12: { pre: 'Si yo',                      post: '(ir) al Chorro de Quevedo más temprano…',   tense: 'Pluscuamp. Subj.' }
+};
+
+const VERB_SENTENCES = {
+  1:  { pre: 'Mientras Karin',              post: '(dormir) en el hotel, Eli salió a comprar café.',   tense: 'Indef./Imperf.' },
+  2:  { pre: 'El domingo pasado nosotros',  post: '(ir) al mercado de pulgas de Usaquén.',             tense: 'Indefinido' },
+  3:  { pre: 'Karin está segura de que el ajiaco', post: '(ser) la sopa más deliciosa.',              tense: 'Indicativo' },
+  4:  { pre: 'No creo que el clima',        post: '(ser) tan frío como dicen.',                        tense: 'Subjuntivo' },
+  5:  { pre: 'Si tuvieran más días,',       post: '(viajar, ellas) a Medellín.',                       tense: 'Condicional' },
+  6:  { pre: 'Mañana nosotros',             post: '(tomar) un vuelo hacia Santa Marta.',               tense: 'Futuro' },
+  7:  { pre: 'Busco un guía turístico que', post: '(hablar) alemán con fluidez.',                      tense: 'Subjuntivo' },
+  8:  { pre: 'Conozco a un guía que',       post: '(hablar) alemán perfectamente.',                    tense: 'Indicativo' },
+  9:  { pre: 'Cuando nosotros',             post: '(llegar) a Monserrate, ya estaba oscureciendo.',    tense: 'Indefinido' },
+  10: { pre: 'Me',                          post: '(gustar) que nos tomáramos una foto allí.',         tense: 'Condicional' }
+};
+
+// ─────────────────────────────────────────────
+// Lógica de resultados de quizzes para admin
+// ─────────────────────────────────────────────
+
+function removerAcentosAdmin(str) {
+  return str.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
+
+function evaluarRespuesta(val, correctas) {
+  if (!val || val.trim() === '') return 'empty';
+  const v = val.trim().toLowerCase();
+  if (correctas.some(c => c.toLowerCase() === v)) return 'correct';
+  if (correctas.some(c => removerAcentosAdmin(c.toLowerCase()) === removerAcentosAdmin(v))) return 'accent';
+  return 'incorrect';
+}
+
+function renderAdminQuizResults(estudiante) {
+  // Leer localStorage de la estudiante activa
+  // (funciona cuando el profesor está en el mismo dispositivo)
+  let subjResp = {};
+  let verbResp = {};
+  let subjVerificado = false;
+  let verbVerificado = false;
+
+  try {
+    const rawSubj = localStorage.getItem('bogota_subjuntivo_respuestas_2026');
+    subjResp = rawSubj ? JSON.parse(rawSubj) : {};
+    subjVerificado = localStorage.getItem('bogota_subjuntivo_verificado_2026') === 'true';
+  } catch { subjResp = {}; }
+
+  try {
+    const rawVerb = localStorage.getItem('bogota_verbos_respuestas_2026');
+    verbResp = rawVerb ? JSON.parse(rawVerb) : {};
+    verbVerificado = localStorage.getItem('bogota_verbos_verificado_2026') === 'true';
+  } catch { verbResp = {}; }
+
+  // ─── Renderizar Subjuntivo ───
+  const subjList = qs('#admin-subj-results-list');
+  const subjBadge = qs('#admin-subj-score-badge');
+
+  const totalSubj = Object.keys(SUBJ_SENTENCES).length;
+  let correctasSubj = 0;
+  let hayDatosSubj = Object.keys(subjResp).some(k => subjResp[k] && subjResp[k].trim() !== '');
+
+  if (!hayDatosSubj) {
+    subjList.innerHTML = `<div class="admin-qr-empty-msg">📭 ${estudiante} aún no ha realizado el quiz del Subjuntivo.</div>`;
+    subjBadge.textContent = 'Sin datos';
+    subjBadge.className = 'admin-qr-score-badge';
+  } else {
+    let rows = '';
+    Object.entries(SUBJ_SENTENCES).forEach(([num, sent]) => {
+      const val = subjResp[num] || '';
+      const qInfo = SUBJ_ANSWERS[parseInt(num)];
+      const estado = evaluarRespuesta(val, qInfo.correct);
+      if (estado === 'correct') correctasSubj++;
+
+      const iconMap = { correct: '✅', incorrect: '❌', accent: '⚠️', empty: '📭' };
+      const labelMap = { correct: 'Correcto', incorrect: 'Incorrecto', accent: 'Sin tilde', empty: 'Sin respuesta' };
+
+      rows += `<tr>
+        <td>${num}</td>
+        <td><span class="admin-qr-status-icon">${iconMap[estado]}</span></td>
+        <td>
+          <div class="admin-qr-sentence">${sent.pre} <strong>[___]</strong> ${sent.post}</div>
+          <div style="font-size:0.75rem; color:var(--txt-3); margin-top:2px;">${sent.tense}</div>
+        </td>
+        <td>
+          <div class="admin-qr-answer-given ${estado}">${val.trim() || '—'}</div>
+          <div style="font-size:0.75rem; color:var(--txt-3);">${labelMap[estado]}</div>
+        </td>
+        <td>
+          <div class="admin-qr-correct-answer">${qInfo.correct.join(' / ')}</div>
+        </td>
+        <td class="admin-qr-explanation">${qInfo.explanation}</td>
+      </tr>`;
+    });
+
+    const pct = Math.round((correctasSubj / totalSubj) * 100);
+    const badgeClass = pct >= 80 ? 'green' : pct >= 50 ? 'yellow' : 'red';
+    subjBadge.textContent = `${correctasSubj}/${totalSubj} (${pct}%)`;
+    subjBadge.className = `admin-qr-score-badge ${badgeClass}`;
+
+    subjList.innerHTML = `
+      <table class="admin-qr-table">
+        <thead><tr>
+          <th>#</th><th>Estado</th><th>Oración</th>
+          <th>Respuesta dada</th><th>Respuesta correcta</th><th>Explicación</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
+
+  // ─── Renderizar Tiempos Verbales ───
+  const verbList = qs('#admin-verb-results-list');
+  const verbBadge = qs('#admin-verb-score-badge');
+
+  const totalVerb = Object.keys(VERB_SENTENCES).length;
+  let correctasVerb = 0;
+  let hayDatosVerb = Object.keys(verbResp).some(k => verbResp[k] && verbResp[k].trim() !== '');
+
+  if (!hayDatosVerb) {
+    verbList.innerHTML = `<div class="admin-qr-empty-msg">📭 ${estudiante} aún no ha realizado el quiz de Tiempos Verbales.</div>`;
+    verbBadge.textContent = 'Sin datos';
+    verbBadge.className = 'admin-qr-score-badge';
+  } else {
+    let rows = '';
+    Object.entries(VERB_SENTENCES).forEach(([num, sent]) => {
+      const val = verbResp[num] || '';
+      const qInfo = VERB_ANSWERS[parseInt(num)];
+      const estado = evaluarRespuesta(val, qInfo.correct);
+      if (estado === 'correct') correctasVerb++;
+
+      const iconMap = { correct: '✅', incorrect: '❌', accent: '⚠️', empty: '📭' };
+      const labelMap = { correct: 'Correcto', incorrect: 'Incorrecto', accent: 'Sin tilde', empty: 'Sin respuesta' };
+
+      rows += `<tr>
+        <td>${num}</td>
+        <td><span class="admin-qr-status-icon">${iconMap[estado]}</span></td>
+        <td>
+          <div class="admin-qr-sentence">${sent.pre} <strong>[___]</strong> ${sent.post}</div>
+          <div style="font-size:0.75rem; color:var(--txt-3); margin-top:2px;">${sent.tense}</div>
+        </td>
+        <td>
+          <div class="admin-qr-answer-given ${estado}">${val.trim() || '—'}</div>
+          <div style="font-size:0.75rem; color:var(--txt-3);">${labelMap[estado]}</div>
+        </td>
+        <td>
+          <div class="admin-qr-correct-answer">${qInfo.correct.join(' / ')}</div>
+        </td>
+        <td class="admin-qr-explanation">${qInfo.explanation}</td>
+      </tr>`;
+    });
+
+    const pct = Math.round((correctasVerb / totalVerb) * 100);
+    const badgeClass = pct >= 80 ? 'green' : pct >= 50 ? 'yellow' : 'red';
+    verbBadge.textContent = `${correctasVerb}/${totalVerb} (${pct}%)`;
+    verbBadge.className = `admin-qr-score-badge ${badgeClass}`;
+
+    verbList.innerHTML = `
+      <table class="admin-qr-table">
+        <thead><tr>
+          <th>#</th><th>Estado</th><th>Oración</th>
+          <th>Respuesta dada</th><th>Respuesta correcta</th><th>Explicación</th>
+        </tr></thead>
+        <tbody>${rows}</tbody>
+      </table>`;
+  }
 }
 
 function getAdminStatus(estudiante, dia) {
@@ -1528,12 +1721,16 @@ function actualizarUISession() {
   const btn = qs('#session-btn');
   const adminLi = qs('#nav-admin-li');
   const perfilLi = qs('#nav-perfil-li');
+  const subjuntivoLi = qs('#nav-subjuntivo-li');
+  const verbosLi = qs('#nav-verbos-li');
   
   if (sesion) {
     const label = sesion.tipo === 'admin' ? '🔑 Salir' : `👩‍🎓 ${sesion.nombre} (Salir)`;
     btn.textContent = label;
     adminLi.style.display = sesion.tipo === 'admin' ? '' : 'none';
     perfilLi.style.display = sesion.tipo === 'estudiante' ? '' : 'none';
+    if (subjuntivoLi) subjuntivoLi.style.display = '';
+    if (verbosLi) verbosLi.style.display = '';
     
     if (sesion.tipo === 'estudiante') {
       const titulo = qs('#perfil-titulo');
@@ -1544,6 +1741,402 @@ function actualizarUISession() {
     btn.textContent = '👤 Ingresar';
     adminLi.style.display = 'none';
     if (perfilLi) perfilLi.style.display = 'none';
+    if (subjuntivoLi) subjuntivoLi.style.display = 'none';
+    if (verbosLi) verbosLi.style.display = 'none';
+  }
+}
+
+// ═══════════════════════════════════════════════
+// 13.5 SUBJUNTIVO
+// ═══════════════════════════════════════════════
+
+const SUBJ_ANSWERS = {
+  1: { correct: ["llueva"], explanation: "Se usa el Presente de Subjuntivo ('llueva') porque expresa un deseo introducido por la conjunción 'Espero que...' con referencia al día de hoy." },
+  2: { correct: ["probemos"], explanation: "Se usa el Presente de Subjuntivo de la primera persona del plural ('probemos') porque la cláusula principal indica una sugerencia ('El profesor nos sugiere que...')." },
+  3: { correct: ["hagan"], explanation: "Se requiere el Presente de Subjuntivo de la segunda persona del plural ('hagan') introducido por un verbo de deseo ('quiere que ustedes...')." },
+  4: { correct: ["tuviera", "tuviese"], explanation: "Se emplea el Pretérito Imperfecto de Subjuntivo ('tuviera' o 'tuviese') en la cláusula condicional introducida por 'Si' para plantear un escenario hipotético sobre el presente." },
+  5: { correct: ["camináramos", "caminásemos"], explanation: "Se utiliza el Pretérito Imperfecto de Subjuntivo ('camináramos' o 'caminásemos') porque el verbo principal está en pasado ('recomendó que...') indicando una sugerencia sobre una acción anterior." },
+  6: { correct: ["aprendiera", "aprendiese"], explanation: "Se requiere el Pretérito Imperfecto de Subjuntivo ('aprendiera' o 'aprendiese') porque la frase expresa un deseo de realización improbable o condicionado ('Me gustaría que...')." },
+  7: { correct: ["hayan visitado"], explanation: "Se usa el Pretérito Perfecto de Subjuntivo ('hayan visitado') para referirse a una acción pasada y terminada ('esta mañana') que despierta una emoción presente ('Me alegra mucho que...')." },
+  8: { correct: ["haya cerrado"], explanation: "Se requiere el Pretérito Perfecto de Subjuntivo ('haya cerrado') para una acción completada que se evalúa desde el presente con valor negativo ('Es una lástima que...')." },
+  9: { correct: ["haya parecido"], explanation: "Se emplea el Pretérito Perfecto de Subjuntivo ('haya parecido') para una valoración subjetiva sobre una experiencia pasada y completada ('en el desayuno')." },
+  10: { correct: ["hubieran sabido", "hubiesen sabido"], explanation: "Se usa el Pretérito Pluscuamperfecto de Subjuntivo ('hubieran sabido' o 'hubiesen sabido') para establecer una condición irreal en el pasado (tercer condicional) con consecuencia pasada ('habrían traído...')." },
+  11: { correct: ["hubiera llovido", "hubiese llovido"], explanation: "Se requiere el Pretérito Pluscuamperfecto de Subjuntivo ('hubiera llovido' o 'hubiese llovido') introducido por 'Ojalá' para expresar un deseo imposible sobre una situación del pasado ('el primer día')." },
+  12: { correct: ["hubiera ido", "hubiese ido"], explanation: "Se emplea el Pretérito Pluscuamperfecto de Subjuntivo ('hubiera ido' o 'hubiese ido') en una condición hipotética del pasado que no se realizó ('Si yo hubiera ido... habría probado')." }
+};
+
+function inicializarSubjuntivo() {
+  const tabs = qsa('.subj-tab-btn');
+  const contents = qsa('.subj-tense-content');
+  const inputs = qsa('.subj-quiz-input');
+  const checkBtn = qs('#subj-check-btn');
+  const resetBtn = qs('#subj-reset-btn');
+  const scoreDisplayTop = qs('#subj-score-display-top');
+  const summaryMsg = qs('#subj-summary-message');
+
+  // 1. Manejo de pestañas teóricas
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      tab.classList.add('active');
+      const targetTense = tab.dataset.tense;
+      const targetContent = qs(`.subj-tense-content[data-tense="${targetTense}"]`);
+      if (targetContent) targetContent.classList.add('active');
+    });
+  });
+
+  // 2. Cargar respuestas guardadas de localStorage
+  const LOCAL_RESPUESTAS_KEY = 'bogota_subjuntivo_respuestas_2026';
+  const LOCAL_VERIFICADO_KEY = 'bogota_subjuntivo_verificado_2026';
+  
+  let respuestasGuardadas = {};
+  try {
+    respuestasGuardadas = JSON.parse(localStorage.getItem(LOCAL_RESPUESTAS_KEY)) || {};
+  } catch {
+    respuestasGuardadas = {};
+  }
+
+  // Rellenar los inputs con lo guardado
+  inputs.forEach(input => {
+    const qNum = input.dataset.q;
+    if (respuestasGuardadas[qNum]) {
+      input.value = respuestasGuardadas[qNum];
+    }
+
+    // Guardar en tiempo real mientras escriben
+    input.addEventListener('input', () => {
+      respuestasGuardadas[qNum] = input.value;
+      localStorage.setItem(LOCAL_RESPUESTAS_KEY, JSON.stringify(respuestasGuardadas));
+      
+      // Limpiar el estado visual si editan después de verificar
+      input.className = 'subj-quiz-input';
+      const fb = qs(`#subj-fb-${qNum}`);
+      if (fb) {
+        fb.style.display = 'none';
+        fb.className = 'subj-feedback-text';
+        fb.innerHTML = '';
+      }
+      localStorage.setItem(LOCAL_VERIFICADO_KEY, 'false');
+      if (summaryMsg) summaryMsg.textContent = '';
+      actualizarProgreso();
+    });
+  });
+
+  function actualizarProgreso() {
+    let contestados = 0;
+    inputs.forEach(input => {
+      if (input.value.trim() !== '') contestados++;
+    });
+    if (scoreDisplayTop) scoreDisplayTop.textContent = contestados;
+  }
+
+  function removerAcentos(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  // 3. Verificar respuestas
+  function verificarRespuestas() {
+    let correctasCount = 0;
+    let tieneErrores = false;
+    let respuestas = {};
+
+    inputs.forEach(input => {
+      const qNum = parseInt(input.dataset.q);
+      const val = input.value.trim().toLowerCase();
+      respuestas[qNum] = input.value; // Guardar valor exacto
+
+      const fb = qs(`#subj-fb-${qNum}`);
+      if (!fb) return;
+
+      const qInfo = SUBJ_ANSWERS[qNum];
+      if (!qInfo) return;
+
+      // Limpiar clases previas
+      input.classList.remove('correct', 'incorrect', 'accent-warning');
+      fb.classList.remove('correct', 'incorrect', 'accent-warning');
+      fb.style.display = 'block';
+
+      if (val === '') {
+        input.classList.add('incorrect');
+        fb.classList.add('incorrect');
+        fb.innerHTML = `❌ Debes completar este espacio. La respuesta es <strong>${qInfo.correct.join(' / ')}</strong>.<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+        tieneErrores = true;
+        return;
+      }
+
+      // Comprobar coincidencia exacta
+      const esExacto = qInfo.correct.some(ans => ans.toLowerCase() === val);
+
+      if (esExacto) {
+        input.classList.add('correct');
+        fb.classList.add('correct');
+        fb.innerHTML = `✅ ¡Excelente!<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+        correctasCount++;
+      } else {
+        // Comprobar si coincide omitiendo acentos
+        const valSinAcento = removerAcentos(val);
+        const esCorrectoSinAcento = qInfo.correct.some(ans => removerAcentos(ans.toLowerCase()) === valSinAcento);
+
+        if (esCorrectoSinAcento) {
+          input.classList.add('accent-warning');
+          fb.classList.add('accent-warning');
+          fb.innerHTML = `⚠️ ¡Casi! Te faltó la tilde (acento). La forma correcta es <strong>${qInfo.correct.join(' / ')}</strong>.<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+          tieneErrores = true;
+        } else {
+          input.classList.add('incorrect');
+          fb.classList.add('incorrect');
+          fb.innerHTML = `❌ Incorrecto. La forma correcta es <strong>${qInfo.correct.join(' / ')}</strong>.<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+          tieneErrores = true;
+        }
+      }
+    });
+
+    localStorage.setItem(LOCAL_RESPUESTAS_KEY, JSON.stringify(respuestas));
+    localStorage.setItem(LOCAL_VERIFICADO_KEY, 'true');
+
+    if (scoreDisplayTop) scoreDisplayTop.textContent = correctasCount;
+
+    if (summaryMsg) {
+      if (correctasCount === 12) {
+        summaryMsg.style.color = 'var(--emerald)';
+        summaryMsg.innerHTML = '🎉 ¡Felicidades Karin y Eli! Han completado todo el desafío del subjuntivo de forma perfecta.';
+        dispararConfeti();
+      } else {
+        summaryMsg.style.color = 'var(--coral)';
+        summaryMsg.innerHTML = `✏️ Tienen ${correctasCount} de 12 correctas. Revisen los comentarios para corregir los errores.`;
+      }
+    }
+  }
+
+  if (checkBtn) {
+    checkBtn.addEventListener('click', verificarRespuestas);
+  }
+
+  // 4. Reiniciar ejercicios
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (confirm('¿Están seguras de querer reiniciar todas las respuestas del subjuntivo?')) {
+        inputs.forEach(input => {
+          input.value = '';
+          input.className = 'subj-quiz-input';
+          const fb = qs(`#subj-fb-${input.dataset.q}`);
+          if (fb) {
+            fb.style.display = 'none';
+            fb.className = 'subj-feedback-text';
+            fb.innerHTML = '';
+          }
+        });
+        localStorage.removeItem(LOCAL_RESPUESTAS_KEY);
+        localStorage.setItem(LOCAL_VERIFICADO_KEY, 'false');
+        if (summaryMsg) summaryMsg.textContent = '';
+        actualizarProgreso();
+      }
+    });
+  }
+
+  // Si ya estaba verificado anteriormente, ejecutar la verificación
+  if (localStorage.getItem(LOCAL_VERIFICADO_KEY) === 'true') {
+    verificarRespuestas();
+  } else {
+    actualizarProgreso();
+  }
+}
+
+// ═══════════════════════════════════════════════
+// 13.6 TIEMPOS VERBALES
+// ═══════════════════════════════════════════════
+
+const VERB_ANSWERS = {
+  1: { correct: ["dormía"], explanation: "Se usa el Pretérito Imperfecto de Indicativo ('dormía') porque describe una acción en progreso o el trasfondo en el pasado en el momento en que ocurre otra acción puntual ('salió')." },
+  2: { correct: ["fuimos"], explanation: "Se usa el Pretérito Indefinido ('fuimos') porque describe una acción completada y terminada en un momento específico del pasado ('El domingo pasado')." },
+  3: { correct: ["es"], explanation: "Se usa el Presente de Indicativo ('es') porque la cláusula principal expresa certeza o convicción ('está segura de que...')." },
+  4: { correct: ["sea"], explanation: "Se requiere el Presente de Subjuntivo ('sea') porque el verbo principal está negado ('No creo que...'), expresando duda o falta de creencia de la opinión del hablante." },
+  5: { correct: ["viajarían"], explanation: "Se usa el Condicional Simple ('viajarían') en la consecuencia de una oración condicional hipotética o irreal introducida por 'Si + imperfecto de subjuntivo' ('tuvieran')." },
+  6: { correct: ["tomaremos"], explanation: "Se usa el Futuro Simple ('tomaremos') porque expresa una acción planeada que ocurrirá con total certeza en un momento posterior al presente ('Mañana')." },
+  7: { correct: ["hable"], explanation: "Se usa el Presente de Subjuntivo ('hable') porque el antecedente de la descripción es indeterminado o desconocido ('un guía turístico que...')." },
+  8: { correct: ["habla"], explanation: "Se usa el Presente de Indicativo ('habla') porque el antecedente es una persona real, conocida y determinada ('Conozco a un guía que...')." },
+  9: { correct: ["llegamos"], explanation: "Se usa el Pretérito Indefinido ('llegamos') porque es una acción puntual e instantánea que se sitúa o interrumpe un marco temporal continuo en el pasado ('ya estaba oscureciendo')." },
+  10: { correct: ["gustaría"], explanation: "Se usa el Condicional Simple ('gustaría') como fórmula de cortesía o deseo para suavizar una petición con cláusula en imperfecto de subjuntivo ('tomáramos')." }
+};
+
+function inicializarVerbos() {
+  const tabs = qsa('.verb-tab-btn');
+  const contents = qsa('.verb-tense-content');
+  const inputs = qsa('.verb-quiz-input');
+  const checkBtn = qs('#verb-check-btn');
+  const resetBtn = qs('#verb-reset-btn');
+  const scoreDisplayTop = qs('#verb-score-display-top');
+  const summaryMsg = qs('#verb-summary-message');
+
+  // 1. Manejo de pestañas teóricas
+  tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+      tabs.forEach(t => t.classList.remove('active'));
+      contents.forEach(c => c.classList.remove('active'));
+
+      tab.classList.add('active');
+      const targetTense = tab.dataset.tense;
+      const targetContent = qs(`.verb-tense-content[data-tense="${targetTense}"]`);
+      if (targetContent) targetContent.classList.add('active');
+    });
+  });
+
+  // 2. Cargar respuestas guardadas de localStorage
+  const LOCAL_RESPUESTAS_KEY = 'bogota_verbos_respuestas_2026';
+  const LOCAL_VERIFICADO_KEY = 'bogota_verbos_verificado_2026';
+  
+  let respuestasGuardadas = {};
+  try {
+    respuestasGuardadas = JSON.parse(localStorage.getItem(LOCAL_RESPUESTAS_KEY)) || {};
+  } catch {
+    respuestasGuardadas = {};
+  }
+
+  // Rellenar los inputs con lo guardado
+  inputs.forEach(input => {
+    const qNum = input.dataset.q;
+    if (respuestasGuardadas[qNum]) {
+      input.value = respuestasGuardadas[qNum];
+    }
+
+    // Guardar en tiempo real mientras escriben
+    input.addEventListener('input', () => {
+      respuestasGuardadas[qNum] = input.value;
+      localStorage.setItem(LOCAL_RESPUESTAS_KEY, JSON.stringify(respuestasGuardadas));
+      
+      // Limpiar el estado visual si editan después de verificar
+      input.className = 'verb-quiz-input';
+      const fb = qs(`#verb-fb-${qNum}`);
+      if (fb) {
+        fb.style.display = 'none';
+        fb.className = 'subj-feedback-text';
+        fb.innerHTML = '';
+      }
+      localStorage.setItem(LOCAL_VERIFICADO_KEY, 'false');
+      if (summaryMsg) summaryMsg.textContent = '';
+      actualizarProgreso();
+    });
+  });
+
+  function actualizarProgreso() {
+    let contestados = 0;
+    inputs.forEach(input => {
+      if (input.value.trim() !== '') contestados++;
+    });
+    if (scoreDisplayTop) scoreDisplayTop.textContent = contestados;
+  }
+
+  function removerAcentos(str) {
+    return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+
+  // 3. Verificar respuestas
+  function verificarRespuestas() {
+    let correctasCount = 0;
+    let tieneErrores = false;
+    let respuestas = {};
+
+    inputs.forEach(input => {
+      const qNum = parseInt(input.dataset.q);
+      const val = input.value.trim().toLowerCase();
+      respuestas[qNum] = input.value; // Guardar valor exacto
+
+      const fb = qs(`#verb-fb-${qNum}`);
+      if (!fb) return;
+
+      const qInfo = VERB_ANSWERS[qNum];
+      if (!qInfo) return;
+
+      // Limpiar clases previas
+      input.classList.remove('correct', 'incorrect', 'accent-warning');
+      fb.classList.remove('correct', 'incorrect', 'accent-warning');
+      fb.style.display = 'block';
+
+      if (val === '') {
+        input.classList.add('incorrect');
+        fb.classList.add('incorrect');
+        fb.innerHTML = `❌ Debes completar este espacio. La respuesta es <strong>${qInfo.correct.join(' / ')}</strong>.<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+        tieneErrores = true;
+        return;
+      }
+
+      // Comprobar coincidencia exacta
+      const esExacto = qInfo.correct.some(ans => ans.toLowerCase() === val);
+
+      if (esExacto) {
+        input.classList.add('correct');
+        fb.classList.add('correct');
+        fb.innerHTML = `✅ ¡Excelente!<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+        correctasCount++;
+      } else {
+        // Comprobar si coincide omitiendo acentos
+        const valSinAcento = removerAcentos(val);
+        const esCorrectoSinAcento = qInfo.correct.some(ans => removerAcentos(ans.toLowerCase()) === valSinAcento);
+
+        if (esCorrectoSinAcento) {
+          input.classList.add('accent-warning');
+          fb.classList.add('accent-warning');
+          fb.innerHTML = `⚠️ ¡Casi! Te faltó la tilde (acento). La forma correcta es <strong>${qInfo.correct.join(' / ')}</strong>.<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+          tieneErrores = true;
+        } else {
+          input.classList.add('incorrect');
+          fb.classList.add('incorrect');
+          fb.innerHTML = `❌ Incorrecto. La forma correcta es <strong>${qInfo.correct.join(' / ')}</strong>.<br><br><strong>Explicación:</strong> ${qInfo.explanation}`;
+          tieneErrores = true;
+        }
+      }
+    });
+
+    localStorage.setItem(LOCAL_RESPUESTAS_KEY, JSON.stringify(respuestas));
+    localStorage.setItem(LOCAL_VERIFICADO_KEY, 'true');
+
+    if (scoreDisplayTop) scoreDisplayTop.textContent = correctasCount;
+
+    if (summaryMsg) {
+      if (correctasCount === 10) {
+        summaryMsg.style.color = 'var(--emerald)';
+        summaryMsg.innerHTML = '🎉 ¡Felicidades Karin y Eli! Han completado todo el desafío de tiempos verbales de forma perfecta.';
+        dispararConfeti();
+      } else {
+        summaryMsg.style.color = 'var(--coral)';
+        summaryMsg.innerHTML = `✏️ Tienen ${correctasCount} de 10 correctas. Revisen los comentarios para corregir los errores.`;
+      }
+    }
+  }
+
+  if (checkBtn) {
+    checkBtn.addEventListener('click', verificarRespuestas);
+  }
+
+  // 4. Reiniciar ejercicios
+  if (resetBtn) {
+    resetBtn.addEventListener('click', () => {
+      if (confirm('¿Están seguras de querer reiniciar todas las respuestas de tiempos verbales?')) {
+        inputs.forEach(input => {
+          input.value = '';
+          input.className = 'verb-quiz-input';
+          const fb = qs(`#verb-fb-${input.dataset.q}`);
+          if (fb) {
+            fb.style.display = 'none';
+            fb.className = 'subj-feedback-text';
+            fb.innerHTML = '';
+          }
+        });
+        localStorage.removeItem(LOCAL_RESPUESTAS_KEY);
+        localStorage.setItem(LOCAL_VERIFICADO_KEY, 'false');
+        if (summaryMsg) summaryMsg.textContent = '';
+        actualizarProgreso();
+      }
+    });
+  }
+
+  // Si ya estaba verificado anteriormente, ejecutar la verificación
+  if (localStorage.getItem(LOCAL_VERIFICADO_KEY) === 'true') {
+    verificarRespuestas();
+  } else {
+    actualizarProgreso();
   }
 }
 
@@ -1612,6 +2205,8 @@ document.addEventListener('DOMContentLoaded', () => {
   inicializarGlosario();
   inicializarQuiz();
   inicializarSesion();
+  inicializarSubjuntivo();
+  inicializarVerbos();
 
   // PWA: Service Worker Registration
   if ('serviceWorker' in navigator) {

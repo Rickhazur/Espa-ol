@@ -41,7 +41,10 @@
       </div>
       <h1>¡Bienvenidas<br>a la Atenas<br>Sudamericana!</h1>
       <p>Su bitácora interactiva de 5 días y guía de rolismos para conquistar las alturas de la capital.</p>
-      <button class="hero-cta" onclick="navegarA('bitacora')">Explorar la Bitácora →</button>
+      <div id="hero-buttons">
+        <button class="hero-cta" onclick="navegarA('bitacora')">Explorar la Bitácora →</button>
+        <button class="hero-login" id="hero-login-btn" onclick="document.getElementById('session-btn').click()">👤 Iniciar Sesión</button>
+      </div>
     </div>
     <div id="hero-scroll-hint">↓</div>
   </header>
@@ -56,6 +59,8 @@
         <li><button class="nav-btn" data-section="quiz">🧠 Quiz</button></li>
         <li><button class="nav-btn" data-section="consejos">🎒 Consejos</button></li>
         <li><a href="https://www.tiktok.com/@ricardotorresespanol" target="_blank" class="nav-btn" style="text-decoration:none; display:inline-block;">📱 TikTok</a></li>
+        <li id="nav-subjuntivo-li" style="display:none"><button class="nav-btn" data-section="subjuntivo">🎓 Subjuntivo</button></li>
+        <li id="nav-verbos-li" style="display:none"><button class="nav-btn" data-section="verbos">🎓 Tiempos Verbales</button></li>
         <li id="nav-perfil-li" style="display:none"><button class="nav-btn" data-section="perfil">👤 Mi Perfil</button></li>
         <li id="nav-admin-li" style="display:none"><button class="nav-btn" data-section="admin">🔑 Admin</button></li>
       </ul>
@@ -201,7 +206,39 @@
           </div>
         </div>
       </div>
+
+      <!-- ── PANEL DE RESULTADOS DE QUIZZES ── -->
+      <div class="admin-quiz-results-section">
+        <div class="admin-qr-header">
+          <h3>📊 Resultados de Cuestionarios</h3>
+          <p>Revisa pregunta por pregunta en qué está fallando cada estudiante.</p>
+          <div id="admin-qr-tabs">
+            <button class="admin-qr-tab-btn active" data-student="Karin">👩‍🎓 Karin</button>
+            <button class="admin-qr-tab-btn" data-student="Eli">👩‍🎓 Eli</button>
+          </div>
+        </div>
+
+        <!-- Subjuntivo Results -->
+        <div class="admin-qr-block">
+          <div class="admin-qr-block-title">
+            <span>🎓 Quiz del Subjuntivo <small style="color:var(--txt-3); font-size:0.8rem;">(12 preguntas)</small></span>
+            <span class="admin-qr-score-badge" id="admin-subj-score-badge">Sin datos</span>
+          </div>
+          <div id="admin-subj-results-list"></div>
+        </div>
+
+        <!-- Verbos Results -->
+        <div class="admin-qr-block">
+          <div class="admin-qr-block-title">
+            <span>⏱️ Quiz de Tiempos Verbales <small style="color:var(--txt-3); font-size:0.8rem;">(10 preguntas)</small></span>
+            <span class="admin-qr-score-badge" id="admin-verb-score-badge">Sin datos</span>
+          </div>
+          <div id="admin-verb-results-list"></div>
+        </div>
+      </div>
+
     </section>
+
 
     <!-- ── PERFIL ── -->
     <section id="perfil" class="page">
@@ -212,6 +249,631 @@
       </div>
       <div id="perfil-lecciones-container" style="max-width: 800px; margin: 0 auto; padding: 0 20px 40px;">
         <!-- Las lecciones se inyectarán aquí -->
+      </div>
+    </section>
+
+    <!-- ── SUBJUNTIVO ── -->
+    <section id="subjuntivo" class="page">
+      <div class="page-header">
+        <div class="page-header-label">Clase de Español Avanzado</div>
+        <h2>El Subjuntivo en Todo su Esplendor 🎓</h2>
+        <p>Dominen los cuatro tiempos clave del subjuntivo con explicaciones, tablas y ejercicios de consolidación en su viaje por Bogotá.</p>
+      </div>
+
+      <div id="subj-layout">
+        <!-- Selector de Tiempos Verbales -->
+        <div id="subj-selector-card" class="glass-panel">
+          <h4>📖 Guía Teórica</h4>
+          <p style="font-size: 0.85rem; color: var(--txt-2); margin-bottom: 15px;">Selecciona un tiempo verbal para ver su formación y usos:</p>
+          <div id="subj-tabs">
+            <button class="subj-tab-btn active" data-tense="presente">✨ Presente</button>
+            <button class="subj-tab-btn" data-tense="imperfecto">⏳ Imperfecto</button>
+            <button class="subj-tab-btn" data-tense="perfecto">✅ Pret. Perfecto</button>
+            <button class="subj-tab-btn" data-tense="pluscuamperfecto">🚀 Pluscuamperfecto</button>
+          </div>
+        </div>
+
+        <!-- Panel de Contenido Teórico -->
+        <div id="subj-content-card" class="glass-panel">
+          
+          <!-- PRESENTE DE SUBJUNTIVO -->
+          <div class="subj-tense-content active" data-tense="presente">
+            <h3>Presente de Subjuntivo</h3>
+            <p class="tense-intro">Se utiliza principalmente para expresar deseos, voluntades, emociones, dudas, hipótesis o valoraciones en el presente o futuro.</p>
+            
+            <div class="grammar-block">
+              <h4>💡 Usos Principales</h4>
+              <ul>
+                <li><strong>Deseo o voluntad:</strong> <em>"Quiero que Karin baile salsa."</em></li>
+                <li><strong>Emoción o sentimiento:</strong> <em>"Me alegra que haga sol hoy."</em></li>
+                <li><strong>Duda o probabilidad (con 'quizás', 'tal vez'):</strong> <em>"Tal vez vayamos a Monserrate."</em></li>
+                <li><strong>Mandato indirecto u ojalá:</strong> <em>"¡Ojalá no llueva en la tarde!"</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>📋 Conjugación Regular</h4>
+              <table class="conjugation-table">
+                <thead>
+                  <tr>
+                    <th>Pronombre</th>
+                    <th>-AR (Probar)</th>
+                    <th>-ER (Comer)</th>
+                    <th>-IR (Vivir)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>yo</td><td>pruebe</td><td>coma</td><td>viva</td></tr>
+                  <tr><td>tú</td><td>pruebes</td><td>comas</td><td>vivas</td></tr>
+                  <tr><td>él / ella / ud.</td><td>pruebe</td><td>coma</td><td>viva</td></tr>
+                  <tr><td>nosotros</td><td>probemos</td><td>comamos</td><td>vivamos</td></tr>
+                  <tr><td>ellos / ellas / uds.</td><td>prueben</td><td>coman</td><td>vivan</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="grammar-block">
+              <h4>⚠️ Irregulares Muy Comunes</h4>
+              <ul class="irregular-list">
+                <li><strong>Ser:</strong> sea, seas, sea, seamos, sean</li>
+                <li><strong>Ir:</strong> vaya, vayas, vaya, vayamos, vayan</li>
+                <li><strong>Estar:</strong> esté, estés, esté, estemos, estén</li>
+                <li><strong>Hacer:</strong> haga, hagas, haga, hagamos, hagan</li>
+                <li><strong>Haber:</strong> haya, hayas, haya, hayamos, hayan</li>
+                <li><strong>Tener:</strong> tenga, tengas, tenga, tengamos, tengan</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- IMPERFECTO DE SUBJUNTIVO -->
+          <div class="subj-tense-content" data-tense="imperfecto">
+            <h3>Pretérito Imperfecto de Subjuntivo</h3>
+            <p class="tense-intro">Se emplea en oraciones condicionales irreales (con 'si'), para expresar deseos improbables o imposibles, o para peticiones de cortesía.</p>
+            
+            <div class="grammar-block">
+              <h4>💡 Usos Principales</h4>
+              <ul>
+                <li><strong>Condición improbable o irreal (con condicional):</strong> <em>"Si tuviera una ruana, no tendría frío."</em></li>
+                <li><strong>Deseo de difícil realización:</strong> <em>"¡Ojalá hiciera calor hoy en Bogotá!"</em></li>
+                <li><strong>Cortesía formal (querer, deber, poder):</strong> <em>"Quisiera pedir un tinto, por favor."</em></li>
+                <li><strong>Peticiones en el pasado:</strong> <em>"El guía nos recomendó que camináramos despacio."</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>📋 Conjugación Regular (Dos variantes válidas: -ra / -se)</h4>
+              <table class="conjugation-table">
+                <thead>
+                  <tr>
+                    <th>Pronombre</th>
+                    <th>-AR (Caminar)</th>
+                    <th>-ER (Comer)</th>
+                    <th>-IR (Vivir)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>yo</td><td>caminara / caminase</td><td>comiera / comiese</td><td>viviera / viviese</td></tr>
+                  <tr><td>tú</td><td>caminaras / caminases</td><td>comieras / comieses</td><td>vivieras / vivieses</td></tr>
+                  <tr><td>él / ella / ud.</td><td>caminara / caminase</td><td>comiera / comiese</td><td>viviera / viviese</td></tr>
+                  <tr><td>nosotros</td><td>camináramos / caminásemos</td><td>comiéramos / comiésemos</td><td>viviéramos / viviésemos</td></tr>
+                  <tr><td>ellos / ellas / uds.</td><td>caminaran / caminasen</td><td>comieran / comiesen</td><td>vivieran / viviesen</td></tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="grammar-block">
+              <h4>⚠️ Irregulares Muy Comunes</h4>
+              <ul class="irregular-list">
+                <li><strong>Ser / Ir:</strong> fuera/fuese, fueras/fueses, fuera/fuese, fuéramos/fuésemos, fueran/fuesen</li>
+                <li><strong>Tener:</strong> tuviera/tuviese, tuvieras/tuvieses, tuviera/tuviese, tuviéramos/tuviésemos</li>
+                <li><strong>Estar:</strong> estuviera/estuviese, estuvieras/estuvieses, estuviera/estuviese</li>
+                <li><strong>Hacer:</strong> hiciera/hiciese, hicieras/hicieses, hiciera/hiciese</li>
+                <li><strong>Haber:</strong> hubiera/hubiese, hubieras/hubieses, hubiera/hubiese</li>
+              </ul>
+            </div>
+          </div>
+
+          <!-- PRETERITO PERFECTO DE SUBJUNTIVO -->
+          <div class="subj-tense-content" data-tense="perfecto">
+            <h3>Pretérito Perfecto de Subjuntivo</h3>
+            <p class="tense-intro">Expresa acciones terminadas que tienen relación con el presente o con un futuro que se percibe como completado.</p>
+            
+            <div class="grammar-block">
+              <h4>💡 Usos Principales</h4>
+              <ul>
+                <li><strong>Relevancia presente de una acción pasada:</strong> <em>"Me alegra que hayan conocido Monserrate."</em> (Ya fueron y regresaron).</li>
+                <li><strong>Acción futura completada:</strong> <em>"Te llamo cuando haya terminado la cata de chocolate."</em></li>
+                <li><strong>Juicio de valor sobre el pasado reciente:</strong> <em>"Es genial que hayamos tomado este tour."</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>📋 Formación</h4>
+              <p class="formula-block"><strong>[ Haber en Presente de Subjuntivo ] + [ Participio Pasado (-ado / -ido) ]</strong></p>
+              <table class="conjugation-table">
+                <thead>
+                  <tr>
+                    <th>Pronombre</th>
+                    <th>Haber (Auxiliar)</th>
+                    <th>Participio</th>
+                    <th>Ejemplo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>yo</td><td>haya</td><td>probado / comido / ido</td><td>haya probado</td></tr>
+                  <tr><td>tú</td><td>hayas</td><td>probado / comido / ido</td><td>hayas comido</td></tr>
+                  <tr><td>él / ella / ud.</td><td>haya</td><td>probado / comido / ido</td><td>haya ido</td></tr>
+                  <tr><td>nosotros</td><td>hayamos</td><td>probado / comido / ido</td><td>hayamos visitado</td></tr>
+                  <tr><td>ellos / ellas / uds.</td><td>hayan</td><td>probado / comido / ido</td><td>hayan cerrado</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- PRETERITO PLUSCUAMPERFECTO DE SUBJUNTIVO -->
+          <div class="subj-tense-content" data-tense="pluscuamperfecto">
+            <h3>Pretérito Pluscuamperfecto de Subjuntivo</h3>
+            <p class="tense-intro">Se utiliza para expresar acciones hipotéticas o irreales en el pasado que no ocurrieron. Es la base del tercer condicional (arrepentimientos o hipótesis pasadas).</p>
+            
+            <div class="grammar-block">
+              <h4>💡 Usos Principales</h4>
+              <ul>
+                <li><strong>Tercer condicional (acción pasada imposible):</strong> <em>"Si hubieran sabido del frío, habrían traído chaquetas."</em> (No lo sabían y pasaron frío).</li>
+                <li><strong>Deseo pasado no realizado:</strong> <em>"¡Ojalá no hubiera llovido ayer en La Candelaria!"</em> (Llovió bastante).</li>
+                <li><strong>Lamento sobre el pasado:</strong> <em>"Habría sido increíble que hubiésemos hecho esa caminata."</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>📋 Formación</h4>
+              <p class="formula-block"><strong>[ Haber en Imperfecto de Subjuntivo ] + [ Participio Pasado (-ado / -ido) ]</strong></p>
+              <table class="conjugation-table">
+                <thead>
+                  <tr>
+                    <th>Pronombre</th>
+                    <th>Haber (Auxiliar, -ra / -se)</th>
+                    <th>Participio</th>
+                    <th>Ejemplo</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr><td>yo</td><td>hubiera / hubiese</td><td>viajado / comido / hecho</td><td>hubiera viajado</td></tr>
+                  <tr><td>tú</td><td>hubieras / hubieses</td><td>viajado / comido / hecho</td><td>hubieras comido</td></tr>
+                  <tr><td>él / ella / ud.</td><td>hubiera / hubiese</td><td>viajado / comido / hecho</td><td>hubiera hecho</td></tr>
+                  <tr><td>nosotros</td><td>hubiéramos / hubiésemos</td><td>viajado / comido / hecho</td><td>hubiéramos salido</td></tr>
+                  <tr><td>ellos / ellas / uds.</td><td>hubieran / hubiesen</td><td>viajado / comido / hecho</td><td>hubieran sabido</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- Ejercicios Prácticos -->
+      <div class="glass-panel" style="margin-top: 30px; padding: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+          <div>
+            <h3 style="font-family: Syne, sans-serif; font-size: 1.6rem; color: var(--gold); margin: 0;">📝 Desafío del Subjuntivo</h3>
+            <p style="color: var(--txt-2); font-size: 0.9rem; margin-top: 4px;">Completa las oraciones con la conjugación correcta del verbo entre paréntesis en el tiempo del subjuntivo indicado.</p>
+          </div>
+          <div id="subj-status-badge" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 50px; font-weight: 700; font-size: 0.9rem; color: var(--gold);">
+            Progreso: <span id="subj-score-display-top">0</span> / 12
+          </div>
+        </div>
+
+        <form id="subj-quiz-form" onsubmit="event.preventDefault();" style="display: grid; gap: 20px;">
+          
+          <!-- Pregunta 1 -->
+          <div class="subj-quiz-row" data-q="1">
+            <div class="subj-quiz-num">1</div>
+            <div class="subj-quiz-text">
+              <span>Espero que hoy no </span>
+              <input type="text" class="subj-quiz-input" data-q="1" placeholder="llover" />
+              <span> (llover) en Monserrate para poder ver toda la sabana desde la cima.</span>
+              <div class="subj-help-tense">[Presente de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-1"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 2 -->
+          <div class="subj-quiz-row" data-q="2">
+            <div class="subj-quiz-num">2</div>
+            <div class="subj-quiz-text">
+              <span>El profesor nos sugiere que </span>
+              <input type="text" class="subj-quiz-input" data-q="2" placeholder="probar" />
+              <span> (probar, nosotros) el ajiaco caliente en el centro.</span>
+              <div class="subj-help-tense">[Presente de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-2"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 3 -->
+          <div class="subj-quiz-row" data-q="3">
+            <div class="subj-quiz-num">3</div>
+            <div class="subj-quiz-text">
+              <span>Para evitar contratiempos, Ricardo quiere que ustedes </span>
+              <input type="text" class="subj-quiz-input" data-q="3" placeholder="hacer" />
+              <span> (hacer, uds.) una vaca antes de salir.</span>
+              <div class="subj-help-tense">[Presente de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-3"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 4 -->
+          <div class="subj-quiz-row" data-q="4">
+            <div class="subj-quiz-num">4</div>
+            <div class="subj-quiz-text">
+              <span>Si Karin </span>
+              <input type="text" class="subj-quiz-input" data-q="4" placeholder="tener" />
+              <span> (tener) una ruana de lana, no sentiría el viento frío de la tarde.</span>
+              <div class="subj-help-tense">[Pretérito Imperfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-4"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 5 -->
+          <div class="subj-quiz-row" data-q="5">
+            <div class="subj-quiz-num">5</div>
+            <div class="subj-quiz-text">
+              <span>Ayer la guía turística nos recomendó que </span>
+              <input type="text" class="subj-quiz-input" data-q="5" placeholder="caminar" />
+              <span> (caminar, nosotros) despacio por la altura de Bogotá.</span>
+              <div class="subj-help-tense">[Pretérito Imperfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-5"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 6 -->
+          <div class="subj-quiz-row" data-q="6">
+            <div class="subj-quiz-num">6</div>
+            <div class="subj-quiz-text">
+              <span>Me gustaría mucho que Eli </span>
+              <input type="text" class="subj-quiz-input" data-q="6" placeholder="aprender" />
+              <span> (aprender) a bailar salsa rola en Chapinero.</span>
+              <div class="subj-help-tense">[Pretérito Imperfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-6"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 7 -->
+          <div class="subj-quiz-row" data-q="7">
+            <div class="subj-quiz-num">7</div>
+            <div class="subj-quiz-text">
+              <span>Me alegra mucho que ustedes </span>
+              <input type="text" class="subj-quiz-input" data-q="7" placeholder="visitar" />
+              <span> (visitar, uds.) la Catedral de Sal de Zipaquirá esta mañana.</span>
+              <div class="subj-help-tense">[Pretérito Perfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-7"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 8 -->
+          <div class="subj-quiz-row" data-q="8">
+            <div class="subj-quiz-num">8</div>
+            <div class="subj-quiz-text">
+              <span>Es una lástima que el mercado de Usaquén ya </span>
+              <input type="text" class="subj-quiz-input" data-q="8" placeholder="cerrar" />
+              <span> (cerrar) sus puertas por hoy.</span>
+              <div class="subj-help-tense">[Pretérito Perfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-8"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 9 -->
+          <div class="subj-quiz-row" data-q="9">
+            <div class="subj-quiz-num">9</div>
+            <div class="subj-quiz-text">
+              <span>Esperamos que no les </span>
+              <input type="text" class="subj-quiz-input" data-q="9" placeholder="parecer" />
+              <span> (parecer) muy extraña la changua en el desayuno.</span>
+              <div class="subj-help-tense">[Pretérito Perfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-9"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 10 -->
+          <div class="subj-quiz-row" data-q="10">
+            <div class="subj-quiz-num">10</div>
+            <div class="subj-quiz-text">
+              <span>Si ustedes </span>
+              <input type="text" class="subj-quiz-input" data-q="10" placeholder="saber" />
+              <span> (saber, uds.) que el clima bogotano cambiaba tanto, habrían traído impermeables.</span>
+              <div class="subj-help-tense">[Pretérito Pluscuamperfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-10"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 11 -->
+          <div class="subj-quiz-row" data-q="11">
+            <div class="subj-quiz-num">11</div>
+            <div class="subj-quiz-text">
+              <span>Ojalá no </span>
+              <input type="text" class="subj-quiz-input" data-q="11" placeholder="llover" />
+              <span> (llover) tanto durante nuestro recorrido por La Candelaria el primer día.</span>
+              <div class="subj-help-tense">[Pretérito Pluscuamperfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-11"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 12 -->
+          <div class="subj-quiz-row" data-q="12">
+            <div class="subj-quiz-num">12</div>
+            <div class="subj-quiz-text">
+              <span>Si yo </span>
+              <input type="text" class="subj-quiz-input" data-q="12" placeholder="ir" />
+              <span> (ir) al Chorro de Quevedo más temprano, habría probado la chicha artesanal.</span>
+              <div class="subj-help-tense">[Pretérito Pluscuamperfecto de Subjuntivo]</div>
+              <div class="subj-feedback-text" id="subj-fb-12"></div>
+            </div>
+          </div>
+
+          <!-- Acciones del Ejercicio -->
+          <div style="display: flex; gap: 15px; margin-top: 20px; align-items: center; flex-wrap: wrap;">
+            <button type="button" id="subj-check-btn" class="btn-primary" style="padding: 14px 30px;">Verificar Respuestas 🔍</button>
+            <button type="button" id="subj-reset-btn" class="btn-secondary" style="padding: 14px 30px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: var(--txt); border-radius: 50px; font-weight:600; cursor:pointer; transition: all 0.2s var(--ease);">Reiniciar Ejercicios 🔄</button>
+            <span id="subj-summary-message" style="font-weight: 600; font-size: 1.05rem;"></span>
+          </div>
+          
+        </form>
+      </div>
+    </section>
+
+    <!-- ── TIEMPOS VERBALES ── -->
+    <section id="verbos" class="page">
+      <div class="page-header">
+        <div class="page-header-label">Clase de Español Avanzado</div>
+        <h2>Dominio de Tiempos Verbales 🎓</h2>
+        <p>Estudien los contrastes gramaticales más desafiantes (Indefinido vs. Imperfecto, Indicativo vs. Subjuntivo, Futuro vs. Condicional) con ejemplos reales de su viaje y explicaciones inmediatas.</p>
+      </div>
+
+      <div id="verb-layout">
+        <!-- Selector de Pestañas Teóricas -->
+        <div id="verb-selector-card" class="glass-panel">
+          <h4>📖 Guía Teórica</h4>
+          <p style="font-size: 0.85rem; color: var(--txt-2); margin-bottom: 15px;">Selecciona un contraste para estudiar sus reglas:</p>
+          <div id="verb-tabs">
+            <button class="verb-tab-btn active" data-tense="pasados">⏳ Pasados: Indefinido / Imperfecto</button>
+            <button class="verb-tab-btn" data-tense="modos">🧠 Modos: Indicativo / Subjuntivo</button>
+            <button class="verb-tab-btn" data-tense="hipotesis">🔮 Hipótesis: Futuro / Condicional</button>
+          </div>
+        </div>
+
+        <!-- Panel de Contenido Teórico -->
+        <div id="verb-content-card" class="glass-panel">
+          
+          <!-- PASADOS: INDEFINIDO VS IMPERFECTO -->
+          <div class="verb-tense-content active" data-tense="pasados">
+            <h3>Pretérito Indefinido vs. Pretérito Imperfecto</h3>
+            <p class="tense-intro">El contraste de pasados es uno de los temas más sutiles en español. El indefinido narra acciones puntuales y terminadas, mientras que el imperfecto describe el escenario, estados continuos o hábitos.</p>
+            
+            <div class="grammar-block">
+              <h4>💡 Pretérito Indefinido (Acción completada)</h4>
+              <ul>
+                <li><strong>Acciones puntuales o eventos terminados:</strong> <em>"Ayer fuimos a Monserrate."</em> (El viaje terminó).</li>
+                <li><strong>Inicio o fin de una acción en el pasado:</strong> <em>"La lluvia empezó a las dos."</em></li>
+                <li><strong>Secuencia de hechos:</strong> <em>"Llegué, compré una ruana y almorcé."</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>💡 Pretérito Imperfecto (Escenario o hábito)</h4>
+              <ul>
+                <li><strong>Descripción de personas, lugares o clima:</strong> <em>"Bogotá estaba muy fría y nublada."</em></li>
+                <li><strong>Acciones en desarrollo o simultáneas:</strong> <em>"Mientras Karin caminaba, Eli tomaba fotos."</em></li>
+                <li><strong>Hábitos o rutinas en el pasado:</strong> <em>"En Suiza, siempre desayunábamos a las siete."</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>💬 Ejemplo de Contraste</h4>
+              <p><em>"Cuando <strong>llegamos</strong> (acción puntual en indefinido) a Zipaquirá, <strong>hacía</strong> (estado continuo en imperfecto) mucho viento."</em></p>
+            </div>
+          </div>
+
+          <!-- MODOS: INDICATIVO VS SUBJUNTIVO -->
+          <div class="verb-tense-content" data-tense="modos">
+            <h3>Modo Indicativo vs. Modo Subjuntivo</h3>
+            <p class="tense-intro">El indicativo se mueve en el mundo de la realidad y la objetividad (hechos constatados, certezas). El subjuntivo se mueve en el plano mental (deseos, emociones, dudas, negaciones).</p>
+            
+            <div class="grammar-block">
+              <h4>💡 Indicativo (Certeza y realidad)</h4>
+              <ul>
+                <li><strong>Afirmaciones objetivas y verdades:</strong> <em>"El tinto es café negro."</em></li>
+                <li><strong>Expresiones de certeza o creencia afirmativa:</strong> <em>"Creo que el ajiaco es delicioso."</em> / <em>"Estoy segura de que vienen."</em></li>
+                <li><strong>Antecedente conocido y real:</strong> <em>"Conozco al guía que habla alemán."</em> (Sé quién es y existe).</li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>💡 Subjuntivo (Duda, emoción, negación o hipótesis)</h4>
+              <ul>
+                <li><strong>Creencia negada o duda:</strong> <em>"No creo que el ajiaco sea feo."</em> / <em>"Dudo que llueva."</em></li>
+                <li><strong>Reacción emocional:</strong> <em>"Me alegra que visiten el museo."</em></li>
+                <li><strong>Antecedente desconocido o hipotético:</strong> <em>"Busco un guía que hable alemán."</em> (No sé si existe o quién es aún).</li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>💬 Ejemplo de Contraste</h4>
+              <p><em>"<strong>Sé</strong> que el hotel <strong>queda</strong> (certeza -> indicativo) cerca, pero <strong>no creo</strong> que <strong>tenga</strong> (creencia negada -> subjuntivo) habitaciones hoy."</em></p>
+            </div>
+          </div>
+
+          <!-- HIPOTESIS: FUTURO VS CONDICIONAL -->
+          <div class="verb-tense-content" data-tense="hipotesis">
+            <h3>Futuro Simple vs. Condicional Simple</h3>
+            <p class="tense-intro">El futuro expresa acciones que ocurrirán en el porvenir con cierto grado de certeza. El condicional expresa situaciones hipotéticas, deseos o peticiones amables condicionadas.</p>
+            
+            <div class="grammar-block">
+              <h4>💡 Futuro Simple (Porvenir y certeza)</h4>
+              <ul>
+                <li><strong>Acción futura planificada:</strong> <em>"Mañana tomaremos el vuelo a Santa Marta."</em></li>
+                <li><strong>Predicciones:</strong> <em>"Hará calor en el Caribe."</em></li>
+                <li><strong>Probabilidad en el presente:</strong> <em>"¿Qué hora es? Serán las ocho."</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>💡 Condicional Simple (Escenarios hipotéticos)</h4>
+              <ul>
+                <li><strong>Consecuencia de condiciones irreales o difíciles (Si + subjuntivo):</strong> <em>"Si tuviéramos dinero, viajaríamos más."</em></li>
+                <li><strong>Deseos y sugerencias amables:</strong> <em>"Me gustaría probar la arepa de huevo."</em></li>
+                <li><strong>Cortesía formal:</strong> <em>"¿Podría traernos la cuenta, por favor?"</em></li>
+              </ul>
+            </div>
+
+            <div class="grammar-block">
+              <h4>💬 Ejemplo de Contraste</h4>
+              <p><em>"Mañana <strong>iremos</strong> (certeza -> futuro) a Usaquén. Si hiciera sol, <strong>caminaríamos</strong> (hipótesis -> condicional) más."</em></p>
+            </div>
+          </div>
+          
+        </div>
+      </div>
+
+      <!-- Ejercicios Prácticos de Tiempos Verbales -->
+      <div class="glass-panel" style="margin-top: 30px; padding: 30px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 15px;">
+          <div>
+            <h3 style="font-family: Syne, sans-serif; font-size: 1.6rem; color: var(--gold); margin: 0;">📝 Desafío de Tiempos Verbales</h3>
+            <p style="color: var(--txt-2); font-size: 0.9rem; margin-top: 4px;">Completa las oraciones conjugando correctamente el verbo entre paréntesis en el tiempo y modo adecuado.</p>
+          </div>
+          <div id="verb-status-badge" style="background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); padding: 8px 16px; border-radius: 50px; font-weight: 700; font-size: 0.9rem; color: var(--gold);">
+            Progreso: <span id="verb-score-display-top">0</span> / 10
+          </div>
+        </div>
+
+        <form id="verb-quiz-form" onsubmit="event.preventDefault();" style="display: grid; gap: 20px;">
+          
+          <!-- Pregunta 1 -->
+          <div class="verb-quiz-row" data-q="1">
+            <div class="verb-quiz-num">1</div>
+            <div class="verb-quiz-text">
+              <span>Mientras Karin </span>
+              <input type="text" class="verb-quiz-input" data-q="1" placeholder="dormir" />
+              <span> (dormir) en el hotel, Eli salió a comprar un café.</span>
+              <div class="subj-help-tense">[Indefinido / Imperfecto]</div>
+              <div class="subj-feedback-text" id="verb-fb-1"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 2 -->
+          <div class="verb-quiz-row" data-q="2">
+            <div class="verb-quiz-num">2</div>
+            <div class="verb-quiz-text">
+              <span>El domingo pasado nosotros </span>
+              <input type="text" class="verb-quiz-input" data-q="2" placeholder="ir" />
+              <span> (ir) al mercado de pulgas de Usaquén.</span>
+              <div class="subj-help-tense">[Indefinido / Imperfecto]</div>
+              <div class="subj-feedback-text" id="verb-fb-2"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 3 -->
+          <div class="verb-quiz-row" data-q="3">
+            <div class="verb-quiz-num">3</div>
+            <div class="verb-quiz-text">
+              <span>Karin está segura de que el ajiaco </span>
+              <input type="text" class="verb-quiz-input" data-q="3" placeholder="ser" />
+              <span> (ser) la sopa más deliciosa de Bogotá.</span>
+              <div class="subj-help-tense">[Indicativo / Subjuntivo]</div>
+              <div class="subj-feedback-text" id="verb-fb-3"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 4 -->
+          <div class="verb-quiz-row" data-q="4">
+            <div class="verb-quiz-num">4</div>
+            <div class="verb-quiz-text">
+              <span>No creo que el clima de Bogotá </span>
+              <input type="text" class="verb-quiz-input" data-q="4" placeholder="ser" />
+              <span> (ser) tan frío como dicen.</span>
+              <div class="subj-help-tense">[Indicativo / Subjuntivo]</div>
+              <div class="subj-feedback-text" id="verb-fb-4"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 5 -->
+          <div class="verb-quiz-row" data-q="5">
+            <div class="verb-quiz-num">5</div>
+            <div class="verb-quiz-text">
+              <span>Si Karin y Eli tuvieran más días de vacaciones, </span>
+              <input type="text" class="verb-quiz-input" data-q="5" placeholder="viajar" />
+              <span> (viajar, ellas) a Medellín.</span>
+              <div class="subj-help-tense">[Futuro / Condicional]</div>
+              <div class="subj-feedback-text" id="verb-fb-5"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 6 -->
+          <div class="verb-quiz-row" data-q="6">
+            <div class="verb-quiz-num">6</div>
+            <div class="verb-quiz-text">
+              <span>Mañana nosotros </span>
+              <input type="text" class="verb-quiz-input" data-q="6" placeholder="tomar" />
+              <span> (tomar) un vuelo hacia Santa Marta a primera hora.</span>
+              <div class="subj-help-tense">[Futuro / Condicional]</div>
+              <div class="subj-feedback-text" id="verb-fb-6"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 7 -->
+          <div class="verb-quiz-row" data-q="7">
+            <div class="verb-quiz-num">7</div>
+            <div class="verb-quiz-text">
+              <span>Busco un guía turístico que </span>
+              <input type="text" class="verb-quiz-input" data-q="7" placeholder="hablar" />
+              <span> (hablar) alemán con fluidez.</span>
+              <div class="subj-help-tense">[Indicativo / Subjuntivo]</div>
+              <div class="subj-feedback-text" id="verb-fb-7"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 8 -->
+          <div class="verb-quiz-row" data-q="8">
+            <div class="verb-quiz-num">8</div>
+            <div class="verb-quiz-text">
+              <span>Conozco a un guía que </span>
+              <input type="text" class="verb-quiz-input" data-q="8" placeholder="hablar" />
+              <span> (hablar) alemán perfectamente.</span>
+              <div class="subj-help-tense">[Indicativo / Subjuntivo]</div>
+              <div class="subj-feedback-text" id="verb-fb-8"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 9 -->
+          <div class="verb-quiz-row" data-q="9">
+            <div class="verb-quiz-num">9</div>
+            <div class="verb-quiz-text">
+              <span>Cuando nosotros </span>
+              <input type="text" class="verb-quiz-input" data-q="9" placeholder="llegar" />
+              <span> (llegar) a Monserrate, ya estaba oscureciendo.</span>
+              <div class="subj-help-tense">[Indefinido / Imperfecto]</div>
+              <div class="subj-feedback-text" id="verb-fb-9"></div>
+            </div>
+          </div>
+
+          <!-- Pregunta 10 -->
+          <div class="verb-quiz-row" data-q="10">
+            <div class="verb-quiz-num">10</div>
+            <div class="verb-quiz-text">
+              <span>Me </span>
+              <input type="text" class="verb-quiz-input" data-q="10" placeholder="gustar" />
+              <span> (gustar) que nos tomáramos una foto frente a la Catedral de Sal.</span>
+              <div class="subj-help-tense">[Futuro / Condicional]</div>
+              <div class="subj-feedback-text" id="verb-fb-10"></div>
+            </div>
+          </div>
+
+          <!-- Acciones del Ejercicio -->
+          <div style="display: flex; gap: 15px; margin-top: 20px; align-items: center; flex-wrap: wrap;">
+            <button type="button" id="verb-check-btn" class="btn-primary" style="padding: 14px 30px;">Verificar Respuestas 🔍</button>
+            <button type="button" id="verb-reset-btn" class="btn-secondary" style="padding: 14px 30px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12); color: var(--txt); border-radius: 50px; font-weight:600; cursor:pointer; transition: all 0.2s var(--ease);">Reiniciar Ejercicios 🔄</button>
+            <span id="verb-summary-message" style="font-weight: 600; font-size: 1.05rem;"></span>
+          </div>
+          
+        </form>
       </div>
     </section>
 
